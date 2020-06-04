@@ -38,8 +38,6 @@ func (w *Watcher) SetCallback(callback WatcherCallback) {
 
 // Run runs the watcher
 func (w *Watcher) Run(ctx context.Context) {
-	// okuduğumuz blokların içindeki transactionları kontrol edip, cüzdanlara gelen paraları kontrol edeceğiz.
-	// eğer para gelmişsse callback methodunu tetikleyeceğiz.
 	for {
 		select {
 		case <-ctx.Done():
