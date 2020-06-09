@@ -36,6 +36,11 @@ func (w *Watcher) SetCallback(callback WatcherCallback) {
 	w.callbacks = append(w.callbacks, callback)
 }
 
+// AddNewAddress adds new address to the list in order to listen it
+func (w *Watcher) AddNewAddress(address string) {
+	w.addresses = append(w.addresses, address)
+}
+
 // Run runs the watcher
 func (w *Watcher) Run(ctx context.Context) {
 	for {
