@@ -23,7 +23,7 @@ var filepath = DefaultInfoFilePath
 // NewInfoStorage creates new info storage
 func NewInfoStorage(path string) (*InfoFile, error) {
 	if path != "" {
-		filepath = DefaultInfoFilePath
+		filepath = path
 	}
 
 	var info *InfoFile
