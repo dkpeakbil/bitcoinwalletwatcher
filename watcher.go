@@ -41,6 +41,29 @@ func (w *Watcher) AddNewAddress(address string) {
 	w.addresses = append(w.addresses, address)
 }
 
+// IsAddressExists checks the address list if the given address exists
+func (w *Watcher) IsAddressExists(address string) bool {
+	for _, addr := range w.addresses {
+		if addr == address {
+			return true
+		}
+	}
+	return false
+}
+
+// RemoveAddress removes the given address from the list
+func (w *Watcher) RemoveAddress(address string) {
+	var temp []string
+	index := 0
+	for _, addr := range w.addresses {
+		if addr != address {
+			temp[index] = addr
+			index++
+		}
+	}
+	w.addresses = temp
+}
+
 // Run runs the watcher
 func (w *Watcher) Run(ctx context.Context) {
 	for {
