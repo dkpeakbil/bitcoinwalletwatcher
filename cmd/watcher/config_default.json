@@ -5,5 +5,8 @@
         "35CmxvHtaujAuihmGzt3dy1rH62VwmqNSy",
         "19qR1Q5exohnQYBahvtzFiTqC2pHyvfgFt",
         "16YgUFKC7CYNaNZ48gGffC1ttn3e7zUQKH"
-    ]
+    ],
+    "coin": "btc",
+    "chain": "test3",
+    "block_cyper_token": ""
 }
