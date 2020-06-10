@@ -26,7 +26,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	w.SetCallback(func(addr string, amount uint64) {
+	w.SetCallback(func(addr string, amount int) {
 		log.Printf("%s got %d satoshi.\n", addr, amount)
 	})
 

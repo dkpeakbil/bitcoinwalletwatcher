@@ -7,9 +7,12 @@ import (
 
 // Config struct
 type Config struct {
-	InfoFile       string   `json:"info_filepath"`
-	DefaultLoopSec float64  `json:"default_loop_in_sec"`
-	Adresses       []string `json:"addresses"`
+	InfoFile        string   `json:"info_filepath"`
+	DefaultLoopSec  float64  `json:"default_loop_in_sec"`
+	Adresses        []string `json:"addresses"`
+	BlockCyperToken string   `json:"block_cyper_token"`
+	Coin            string   `json:"coin"`
+	Chain           string   `json:"chain"`
 }
 
 // NewConfig reads the path and returns watcher config

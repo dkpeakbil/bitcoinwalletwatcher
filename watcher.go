@@ -2,8 +2,11 @@ package bitcoinwalletwatcher
 
 import (
 	"context"
+	"errors"
 	"log"
 	"time"
+
+	"github.com/blockcypher/gobcy"
 )
 
 // Watcher struct
@@ -12,22 +15,47 @@ type Watcher struct {
 	loopInSec time.Duration
 	addresses []string
 	callbacks []WatcherCallback
+	api       gobcy.API
 }
 
 // WatcherCallback method
-type WatcherCallback func(string, uint64)
+type WatcherCallback func(string, int)
+
+var (
+	// ErrMissingBlockCyperToken error
+	ErrMissingBlockCyperToken = errors.New("blockcyper.io API token is not provied")
+)
 
 // NewWatcher returns new bitcoin wallet watcher
 func NewWatcher(cfg *Config) (*Watcher, error) {
+	if cfg.BlockCyperToken == "" {
+		return nil, ErrMissingBlockCyperToken
+	}
+
 	info, err := NewInfoStorage(cfg.InfoFile)
 	if err != nil {
 		return nil, err
+	}
+
+	if cfg.Coin == "" {
+		cfg.Coin = "btc"
+	}
+
+	if cfg.Chain == "" {
+		cfg.Coin = "main"
+	}
+
+	api := gobcy.API{
+		Coin:  cfg.Coin,
+		Chain: cfg.Chain,
+		Token: cfg.BlockCyperToken,
 	}
 
 	return &Watcher{
 		info:      info,
 		loopInSec: time.Duration(cfg.DefaultLoopSec),
 		addresses: cfg.Adresses,
+		api:       api,
 	}, nil
 }
 
@@ -80,29 +108,32 @@ func (w *Watcher) Run(ctx context.Context) {
 }
 
 func (w *Watcher) readBlock() {
-	block, err := getBlockInformation(w.info.CurrentBlock)
+	block, err := w.api.GetBlock(w.info.CurrentBlock, "", nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("Error getting block: %v\n", err)
 		return
 	}
 
-	// block not found yet
-	if block == nil {
-		return
-	}
-
-	for _, tx := range block.Tx {
+	for _, tx := range block.TXids {
 		w.checkTx(tx)
 	}
 
 	w.info.Update(block.Height + 1)
 }
 
-func (w *Watcher) checkTx(tx transactionDetail) {
-	for _, out := range tx.Out {
-		if contains(w.addresses, out.Addr) {
-			for _, c := range w.callbacks {
-				c(out.Addr, out.Amount)
+func (w *Watcher) checkTx(txHash string) {
+	tx, err := w.api.GetTX(txHash, nil)
+	if err != nil {
+		log.Printf("Error getting transaction %v\n", err)
+		return
+	}
+
+	for _, out := range tx.Outputs {
+		for _, outAddress := range out.Addresses {
+			if contains(w.addresses, outAddress) {
+				for _, c := range w.callbacks {
+					c(outAddress, out.Value)
+				}
 			}
 		}
 	}

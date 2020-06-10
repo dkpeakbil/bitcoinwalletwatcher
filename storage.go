@@ -8,7 +8,7 @@ import (
 
 // InfoFile is the information file
 type InfoFile struct {
-	CurrentBlock uint64 `json:"current_block"`
+	CurrentBlock int `json:"current_block"`
 }
 
 const (
@@ -45,7 +45,7 @@ func NewInfoStorage(path string) (*InfoFile, error) {
 }
 
 // Update updates details
-func (i *InfoFile) Update(block uint64) error {
+func (i *InfoFile) Update(block int) error {
 	i.CurrentBlock = block
 
 	return nil
